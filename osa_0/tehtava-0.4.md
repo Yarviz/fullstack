@@ -1,8 +1,8 @@
-# Uusi muistiinpano
+# Uusi viesti
 
 ### Sekvenssikaavio
 
-![Uusi Viesti](uusi_viesti.png)
+![Uusi Viesti](./images/uusi_viesti.png)
 
 ### WebSequenceDiagrams palvelun koodi
 

@@ -2,7 +2,7 @@
 
 ### Sekvenssikaavio
 
-![Single Page App](single_page_app.png)
+![Single Page App](./images/single_page_app.png)
 
 ### WebSequenceDiagrams palvelun koodi
 
