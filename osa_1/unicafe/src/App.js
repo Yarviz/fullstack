@@ -7,7 +7,7 @@ const Button = ({value}) => {
   );
 }
 
-const StatisticLine = ({text, value}) => <>{text} {value}<br/></>
+const StatisticLine = ({text, value}) => <tr><td>{text}</td> <td>{value}</td></tr>
 
 const Statistics = ({values}) => {
   const { good, neutral, bad } = values;
@@ -20,16 +20,19 @@ const Statistics = ({values}) => {
       </>
     )
   }
-  const stat_values = good.item * good.value + neutral.item + neutral.value + bad.item * bad.value;
+  const average = (good.item * good.value + neutral.item + neutral.value + bad.item * bad.value) / total;
+  const positive = `${good.item / total * 100} %`
   return (
     <>
       <h1>statistics</h1>
-      <StatisticLine text={good.text} value={good.item}/>
-      <StatisticLine text={neutral.text} value={neutral.item}/>
-      <StatisticLine text={bad.text} value={bad.item}/>
-      <StatisticLine text='all' value={total}/>
-      <StatisticLine text='average' value={stat_values / total}/>
-      <StatisticLine text='positive' value={good.item / total * 100}/>
+      <table>
+        <StatisticLine text={good.text} value={good.item}/>
+        <StatisticLine text={neutral.text} value={neutral.item}/>
+        <StatisticLine text={bad.text} value={bad.item}/>
+        <StatisticLine text='all' value={total}/>
+        <StatisticLine text='average' value={average}/>
+        <StatisticLine text='positive' value={positive}/>
+      </table>
     </>
   );
 }
