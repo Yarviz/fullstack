@@ -84,7 +84,7 @@ const App = () => {
       console.log("loaded persons.json");
       setPersons(response.data);
     })
-  }, []);
+  }, [])
 
   return (
     <div>
