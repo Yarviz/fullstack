@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
+import server from './services/persons'
+import DataForm from './components/DataForm'
+import Persons from './components/Persons'
 
 const Filter = ({value, cb}) => {
   return (
@@ -13,47 +15,17 @@ const Filter = ({value, cb}) => {
   )
 }
 
-const DataForm = ({data, onSubmit}) => {
-  return (
-    <form onSubmit={onSubmit}>
-      {data.map(item => {
-        return(
-          <div key={item.text}>
-            {item.text}
-            <input
-              value={item.value}
-              onChange={item.cb}
-            />
-          </div>
-        )
-      })}
-      <div>
-        <button type="submit">add</button>
-      </div>
-    </form>
-  )
-}
-
-const Persons = ({persons}) => {
-  const list_persons = persons.map(person =>
-    <div key={person.name}>{person.name} {person.phone}</div>
-  )
-  return(
-    <div>{list_persons}</div>
-  )
-}
-
 const App = () => {
   const [persons, setPersons] = useState([]);
-  const [newPerson, setNewPerson] = useState({ name: '', phone: '' });
+  const [newPerson, setNewPerson] = useState({ name: '', number: '' });
   const [filter, setFilter] = useState('');
 
   const nameChange = (event) => {
     setNewPerson({...newPerson, name: event.target.value});
   }
 
-  const phoneChange = (event) => {
-    setNewPerson({...newPerson, phone: event.target.value});
+  const numberChange = (event) => {
+    setNewPerson({...newPerson, number: event.target.value});
   }
 
   const filterChange = (event) => {
@@ -62,12 +34,39 @@ const App = () => {
 
   const addPerson = (event) => {
     event.preventDefault();
-    if (persons.find(person => person.name === newPerson.name)) {
-      alert(`name ${newPerson.name} already added to phonebook`);
-      return;
+    for(const person of persons) {
+      if (person.name === newPerson.name) {
+        const res = window.confirm(
+          `name ${newPerson.name} already added to numberbook, replace the old number with new one?`
+        );
+        if (!res) return;
+        server.update(person.id, newPerson).then(data => {
+          const updated = { ...newPerson, id: person.id };
+          const new_list = [...persons];
+          const index = new_list.map(item => item.id).indexOf(person.id);
+          new_list[index] = updated;
+          setPersons(new_list);
+          setNewPerson({ name: '', number: '' });
+        }).catch(reason => alert(reason));
+        return;
+      }
     }
-    setPersons(persons.concat(newPerson));
-    setNewPerson({ name: '', phone: '' });
+    server.create(newPerson).then(data => {
+      setPersons(persons.concat(data));
+      setNewPerson({ name: '', number: '' });
+      console.log(data);
+    }).catch(reason => alert(reason));
+  }
+
+  const deletePerson = (person) => {
+    if (window.confirm(`Delete ${person.name}?`)) {
+      server.remove(person.id).then(() => {
+        const new_list = [...persons];
+        const index = new_list.map(item => item.name).indexOf(person.name);
+        new_list.splice(index, 1);
+        setPersons(new_list)
+      }).catch(reason => alert(reason));
+    }
   }
 
   const filtered_persons = persons.filter(
@@ -76,23 +75,24 @@ const App = () => {
 
   const person_data = [
     {text: "name:", value: newPerson.name, cb: nameChange},
-    {text: "phone:", value: newPerson.phone, cb: phoneChange},
+    {text: "number:", value: newPerson.number, cb: numberChange},
   ]
 
   useEffect(() => {
-    axios.get('http://localhost:3001/persons').then(response => {
+    server.getAll().then(data => {
       console.log("loaded persons.json");
-      setPersons(response.data);
-    })
+      console.log(data)
+      setPersons(data);
+    }).catch(reason => alert(reason));
   }, [])
 
   return (
     <div>
-      <h2>Phonebook</h2>
+      <h2>numberbook</h2>
       <Filter values={filter} cb={filterChange}/>
       <DataForm data={person_data} onSubmit={addPerson}/>
       <h2>Numbers</h2>
-      <Persons persons={filtered_persons}/>
+      <Persons persons={filtered_persons} cb={deletePerson}/>
     </div>
   )
 }
