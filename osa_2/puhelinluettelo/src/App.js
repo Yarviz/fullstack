@@ -2,29 +2,8 @@ import { useState, useEffect } from 'react'
 import server from './services/persons'
 import DataForm from './components/DataForm'
 import Persons from './components/Persons'
-import './styles.css'
-
-const Filter = ({value, cb}) => {
-  return (
-    <div>
-      filter person:
-        <input
-          value={value}
-          onChange={cb}
-        />
-    </div>
-  )
-}
-
-const Message = ({message}) => {
-  if (!message) return(<></>);
-  const style = message.is_error ? 'error' : 'ok';
-  return(
-    <div className={style}>
-      {message.msg}
-    </div>
-  )
-}
+import Message from './components/Message'
+import Filter from './components/Filter'
 
 const App = () => {
   const [persons, setPersons] = useState([]);
