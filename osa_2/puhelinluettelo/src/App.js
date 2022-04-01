@@ -88,7 +88,7 @@ const App = () => {
 
   return (
     <div>
-      <h2>numberbook</h2>
+      <h2>Numberbook</h2>
       <Message message={message}/>
       <Filter values={filter} cb={filterChange}/>
       <DataForm data={person_data} onSubmit={addPerson}/>
