@@ -29,6 +29,11 @@ const App = () => {
     setTimeout(() => setMessage(null), 2000);
   }
 
+  const errorHandler = (error) => {
+    console.log(error.response.data)
+    setMsg(error.response.data.error, true)
+  }
+
   const addPerson = (event) => {
     event.preventDefault();
     for(const person of persons) {
@@ -45,7 +50,7 @@ const App = () => {
           setPersons(new_list);
           setMsg(`${newPerson.name} updated`, false);
           setNewPerson({ name: '', number: '' });
-        }).catch(() => setMsg(`failed to update ${newPerson.name} to server`, true));
+        }).catch(errorHandler);
         return;
       }
     }
@@ -54,7 +59,7 @@ const App = () => {
       setMsg(`Added ${newPerson.name} to phonebook`, false);
       setNewPerson({ name: '', number: '' });
       console.log(data);
-    }).catch(() => setMsg(`failed to add ${newPerson.name} to server`, true));
+    }).catch(errorHandler);
   }
 
   const deletePerson = (person) => {
